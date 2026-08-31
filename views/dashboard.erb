@@ -1,0 +1,38 @@
+<% @title = "Campaigns" %>
+<section class="panel">
+  <h1>Campaign Ledger</h1>
+  <p class="muted">Your sanctioned campaigns, Arbitrator. Each begins with a freshly charted zone.</p>
+
+  <% if @campaigns.empty? %>
+    <p class="empty-state">No campaigns on record. The hive awaits its chronicler.</p>
+  <% else %>
+    <ul class="card-list">
+      <% @campaigns.each do |c| %>
+        <li class="card">
+          <a class="card-title" href="/campaigns/<%= c.id %>"><%= h c.name %></a>
+          <% unless c.description.to_s.empty? %><p class="muted"><%= h c.description %></p><% end %>
+          <div class="card-meta">
+            <span><%= c.zones_dataset.count %> season<%= "s" unless c.zones_dataset.count == 1 %></span> ·
+            <span><%= c.gangs_dataset.count %> gang<%= "s" unless c.gangs_dataset.count == 1 %></span>
+          </div>
+          <form method="post" action="/campaigns/<%= c.id %>/delete" onsubmit="return confirm('Purge this campaign from the record?')">
+            <button type="submit" class="btn danger small-btn">Purge</button>
+          </form>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</section>
+
+<section class="panel">
+  <h2>Charter New Campaign</h2>
+  <form method="post" action="/campaigns" class="stacked-form narrow">
+    <label>Campaign name
+      <input type="text" name="name" required maxlength="80" placeholder="e.g. The Sump Wars">
+    </label>
+    <label>Description <span class="muted small">(optional)</span>
+      <input type="text" name="description" maxlength="200" placeholder="A struggle for the last clean water in Hive Primus…">
+    </label>
+    <button type="submit" class="btn primary">Charter Campaign</button>
+  </form>
+</section>

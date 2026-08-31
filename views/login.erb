@@ -1,0 +1,20 @@
+<% @title = "Access Terminal" %>
+<section class="panel auth-panel">
+  <h1>Access Terminal</h1>
+  <p class="muted">State your callsign, Arbitrator. The hive is watching.</p>
+  <% if @error %><div class="error">✖ <%= h @error %></div><% end %>
+  <form method="post" action="/login" class="stacked-form">
+    <label>Callsign
+      <input type="text" name="username" required autocomplete="username" autofocus>
+    </label>
+    <label>Passphrase
+      <input type="password" name="password" required autocomplete="current-password">
+    </label>
+    <button type="submit" class="btn primary">Jack In</button>
+  </form>
+  <% if github_enabled? %>
+    <div class="divider">or</div>
+    <a class="btn github" href="/auth/github">⬡ Authenticate via GitHub</a>
+  <% end %>
+  <p class="muted small">No credentials? <a href="/register">Petition for access</a>.</p>
+</section>

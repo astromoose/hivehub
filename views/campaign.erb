@@ -1,0 +1,60 @@
+<% @title = @campaign.name %>
+<section class="panel">
+  <div class="breadcrumbs"><a href="/dashboard">Campaigns</a> / <%= h @campaign.name %></div>
+  <h1><%= h @campaign.name %></h1>
+  <% unless @campaign.description.to_s.empty? %><p class="muted"><%= h @campaign.description %></p><% end %>
+</section>
+
+<div class="two-col">
+  <section class="panel">
+    <h2>Seasons</h2>
+    <p class="muted small">Each season charts a new zone of the underhive. Gangs carry over; turf does not.</p>
+    <ul class="card-list">
+      <% @zones.each do |z| %>
+        <li class="card">
+          <a class="card-title" href="/zones/<%= z.id %>">Season <%= z.season %>: <%= h z.name %></a>
+          <p class="muted small"><%= h z.description %></p>
+          <div class="card-meta"><%= z.turfs_dataset.count %> turfs · <%= z.turfs_dataset.exclude(gang_id: nil).count %> claimed</div>
+        </li>
+      <% end %>
+    </ul>
+    <form method="post" action="/campaigns/<%= @campaign.id %>/zones">
+      <button type="submit" class="btn primary">Chart New Season</button>
+    </form>
+  </section>
+
+  <section class="panel">
+    <h2>Gangs</h2>
+    <% if @gangs.empty? %>
+      <p class="empty-state">No gangs registered. The zone is all no-man's-land.</p>
+    <% else %>
+      <ul class="gang-list">
+        <% @gangs.each do |g| %>
+          <li>
+            <span class="swatch" style="background: <%= g.color %>"></span>
+            <span class="gang-name"><%= h g.name %></span>
+            <span class="muted small"><%= h g.gang_type %></span>
+            <form method="post" action="/gangs/<%= g.id %>/delete" class="inline-form" onsubmit="return confirm('Strike this gang from the record? Their turf reverts to no-man\'s-land.')">
+              <button type="submit" class="link-btn danger-link">✖</button>
+            </form>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+    <h3>Register Gang</h3>
+    <form method="post" action="/campaigns/<%= @campaign.id %>/gangs" class="stacked-form narrow">
+      <label>Gang name
+        <input type="text" name="name" required maxlength="60" placeholder="e.g. The Slag Sirens">
+      </label>
+      <label>Affiliation
+        <select name="gang_type" required>
+          <% Flavour::GANG_TYPES.each do |t| %>
+            <option value="<%= h t %>"><%= h t %></option>
+          <% end %>
+        </select>
+      </label>
+      <button type="submit" class="btn primary">Register &amp; Assign Home Turf</button>
+    </form>
+    <p class="muted small">New gangs are granted a random unclaimed turf on the edge of the current season's map. At least half of every map must remain no-man's-land at claim time.</p>
+  </section>
+</div>

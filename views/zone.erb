@@ -1,0 +1,29 @@
+<% @title = "Season #{@zone.season}: #{@zone.name}" %>
+<section class="panel">
+  <div class="breadcrumbs">
+    <a href="/dashboard">Campaigns</a> /
+    <a href="/campaigns/<%= @campaign.id %>"><%= h @campaign.name %></a> /
+    Season <%= @zone.season %>
+  </div>
+  <h1><%= h @zone.name %></h1>
+  <p class="muted"><%= h @zone.description %></p>
+</section>
+
+<div class="map-layout">
+  <section class="panel map-panel">
+    <div id="hexmap-container" data-zone-id="<%= @zone.id %>">
+      <svg id="hexmap" role="img" aria-label="Zone hexmap"></svg>
+    </div>
+    <div id="turf-tooltip" class="turf-tooltip" hidden></div>
+  </section>
+
+  <aside class="panel side-panel">
+    <h2>Chart Key</h2>
+    <ul class="gang-list" id="legend"></ul>
+    <div id="turf-detail" class="turf-detail">
+      <p class="muted small">Select a turf hex to inspect and reassign it.</p>
+    </div>
+  </aside>
+</div>
+
+<script src="/js/hexmap.js"></script>

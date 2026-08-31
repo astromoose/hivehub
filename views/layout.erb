@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HIVEHUB<%= @title ? " — #{h @title}" : "" %></title>
+  <link rel="stylesheet" href="/css/hivehub.css">
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+  <header class="masthead">
+    <a class="brand" href="/">
+      <span class="brand-glyph">⬢</span>
+      <span class="brand-name">HIVE<span class="brand-accent">HUB</span></span>
+    </a>
+    <span class="masthead-sub">// NECROMUNDA CAMPAIGN CARTOGRAPHY // ARBITRATOR ACCESS ONLY</span>
+    <nav>
+      <% if current_user %>
+        <span class="user-tag">⛭ <%= h current_user.display_name %></span>
+        <a href="/dashboard">Campaigns</a>
+        <form method="post" action="/logout" class="inline-form"><button type="submit" class="link-btn">Sign out</button></form>
+      <% end %>
+    </nav>
+  </header>
+
+  <% if (flash = session.delete(:flash)) %>
+    <div class="flash">⚠ <%= h flash %></div>
+  <% end %>
+
+  <main>
+    <%= yield %>
+  </main>
+
+  <footer class="vox-footer">
+    <% q, attribution = footer_quote %>
+    <div class="quote">“<%= h q %>”</div>
+    <div class="attribution">— <%= h attribution %></div>
+    <div class="fine-print">HIVEHUB v1.0 · Sanctioned by the Merchant Guild for Arbitrator use · Unauthorised access is punishable by servitude</div>
+  </footer>
+</body>
+</html>

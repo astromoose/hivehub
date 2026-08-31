@@ -1,0 +1,19 @@
+<% @title = "Petition for Access" %>
+<section class="panel auth-panel">
+  <h1>Petition for Access</h1>
+  <p class="muted">Register as an Arbitrator. Choose your callsign carefully — the underhive remembers.</p>
+  <% if @error %><div class="error">✖ <%= h @error %></div><% end %>
+  <form method="post" action="/register" class="stacked-form">
+    <label>Callsign
+      <input type="text" name="username" required pattern="[a-zA-Z0-9_\-]{3,32}" autocomplete="username">
+    </label>
+    <label>Display name <span class="muted small">(optional)</span>
+      <input type="text" name="display_name" maxlength="64">
+    </label>
+    <label>Passphrase <span class="muted small">(min 8 characters)</span>
+      <input type="password" name="password" required minlength="8" autocomplete="new-password">
+    </label>
+    <button type="submit" class="btn primary">Submit Petition</button>
+  </form>
+  <p class="muted small">Already sanctioned? <a href="/login">Access terminal</a>.</p>
+</section>
