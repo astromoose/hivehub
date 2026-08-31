@@ -328,6 +328,22 @@ get "/zones/:id" do
   erb :zone
 end
 
+get "/zones/:id/print" do
+  require_login!
+  @zone = own_zone!(params[:id])
+  @campaign = @zone.campaign
+  @gangs = @campaign.gangs
+  @turfs = @zone.turfs
+  @data_json = JSON.generate(
+    {
+      gangs: @gangs.map { |g| { id: g.id, name: g.name, gang_type: g.gang_type, color: g.color, icon_path: gang_icon_path(g) } },
+      turfs: @turfs.map { |t| { id: t.id, q: t.q, r: t.r, name: t.name, gang_id: t.gang_id, home_gang_id: t.home_gang_id } }
+    },
+    script_safe: true
+  )
+  erb :print, layout: false
+end
+
 get "/zones/:id/data" do
   require_login!
   zone = own_zone!(params[:id])
