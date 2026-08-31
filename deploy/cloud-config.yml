@@ -1,0 +1,25 @@
+#cloud-config
+# HIVEHUB — paste into the "Cloud config" field when creating the Hetzner
+# server. The server provisions itself on first boot (~3-5 minutes);
+# progress lands in /var/log/hivehub-setup.log.
+
+package_update: true
+package_upgrade: true
+
+packages:
+  - git
+
+timezone: Europe/Berlin
+
+write_files:
+  # Unattended security upgrades may reboot the box at 04:30 if needed.
+  - path: /etc/apt/apt.conf.d/51-hivehub-auto-reboot
+    content: |
+      Unattended-Upgrade::Automatic-Reboot "true";
+      Unattended-Upgrade::Automatic-Reboot-Time "04:30";
+
+runcmd:
+  - git clone https://github.com/astromoose/hivehub.git /opt/hivehub
+  - DOMAIN=hivehub.dirtyblades.com bash /opt/hivehub/deploy/setup.sh >> /var/log/hivehub-setup.log 2>&1
+
+final_message: "HIVEHUB provisioned after $UPTIME seconds. Check /var/log/hivehub-setup.log"

@@ -47,8 +47,20 @@ are fast.
 
 ## 3. Provision
 
-SSH in and run the setup script (installs Ruby, Caddy, the app, systemd
-units, firewall, daily backups):
+**Hands-free (recommended):** when creating the server, paste the contents of
+[`deploy/cloud-config.yml`](deploy/cloud-config.yml) into the **Cloud config**
+field. The server clones the repo and runs the setup script on first boot —
+no SSH required. Give it ~3–5 minutes, then check:
+
+```bash
+ssh root@<server-ip> 'tail /var/log/hivehub-setup.log; systemctl is-active hivehub caddy'
+```
+
+It also enables automatic security-upgrade reboots at 04:30, so the box
+patches itself down the line.
+
+**Manual alternative:** SSH in and run the setup script yourself
+(installs Ruby, Caddy, the app, systemd units, firewall, daily backups):
 
 ```bash
 ssh root@<server-ip>
