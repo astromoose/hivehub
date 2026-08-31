@@ -82,6 +82,23 @@ vi /etc/hivehub.env    # fill in GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET
 systemctl restart hivehub
 ```
 
+## Secrets handling
+
+All secrets (`SESSION_SECRET`, optional `GITHUB_CLIENT_ID`/`GITHUB_CLIENT_SECRET`)
+live in **`/etc/hivehub.env`** on the server — `root:root`, mode `600`,
+loaded by systemd before privileges drop to the unprivileged `hivehub` user.
+They are never committed to the repo and are not part of the database backups.
+
+- `setup.sh` creates the file only if missing (generating `SESSION_SECRET`
+  automatically); `update.sh` never touches it — updates won't clobber it.
+- **Do not** put secrets in the cloud-config field: instance user-data is
+  readable by any process on the server via the metadata service and is
+  retained in the Hetzner console.
+- If you keep an off-site copy, treat it like a password:
+  `scp root@<server-ip>:/etc/hivehub.env` into a password manager, not a repo.
+- Rotating: edit the file, `systemctl restart hivehub`. Note that changing
+  `SESSION_SECRET` signs everyone out.
+
 ## 4. Updating
 
 After pushing to `main`:
