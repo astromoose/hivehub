@@ -64,6 +64,7 @@
         <% @gangs.each do |g| %>
           <li>
             <span class="swatch" style="background: <%= g.color %>"></span>
+            <%= gang_icon_svg(g) %>
             <span class="gang-name"><%= h g.name %></span>
             <span class="muted small"><%= h g.gang_type %></span>
             <form method="post" action="/gangs/<%= g.id %>/delete" class="inline-form" onsubmit="return confirm('Strike this gang from the record? Their turf reverts to no-man\'s-land.')">

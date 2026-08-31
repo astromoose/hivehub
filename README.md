@@ -41,7 +41,9 @@ username/password auth is available.
 - **User (Arbitrator)** — has many campaigns; local (bcrypt) or GitHub identity
 - **Campaign** — has many zones (seasons) and gangs
 - **Zone** — one hexmap per season; 12–20 randomly generated, connected turf hexes with Necromunda flavour text
-- **Gang** — one of the 16 recognised affiliations, palette colour assigned on registration
+- **Gang** — one of the 16 recognised affiliations, palette colour and a
+  thematic icon ([game-icons.net](https://game-icons.net), CC BY 3.0 by
+  Lorc, Delapouite & Carl Olsen) assigned on registration
 - **Turf** — a hex on the zone map; may be held by a gang, marked ⌂ if it is that gang's home
 
 ## Rules enforced

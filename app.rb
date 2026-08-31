@@ -10,6 +10,7 @@ require "securerandom"
 require_relative "lib/models"
 require_relative "lib/flavour"
 require_relative "lib/generator"
+require_relative "lib/icons"
 
 set :public_folder, File.join(__dir__, "public")
 set :views, File.join(__dir__, "views")
@@ -48,6 +49,18 @@ helpers do
   def h(text) = Rack::Utils.escape_html(text.to_s)
 
   def footer_quote = Flavour.quote
+
+  def gang_icon_path(gang)
+    Icons::PATHS[gang.icon || Icons.for_gang_type(gang.gang_type)]
+  end
+
+  # Inline SVG icon tinted with the gang's colour, for rosters/legends.
+  def gang_icon_svg(gang, size: 18)
+    path = gang_icon_path(gang)
+    return "" unless path
+
+    %(<svg class="gang-icon" width="#{size}" height="#{size}" viewBox="0 0 512 512" aria-hidden="true"><path fill="#{h gang.color}" d="#{path}"/></svg>)
+  end
 end
 
 # ---------- Auth ----------
@@ -244,7 +257,7 @@ get "/zones/:id/data" do
   gangs = zone.campaign.gangs
   json(
     zone: { id: zone.id, name: zone.name, season: zone.season, description: zone.description },
-    gangs: gangs.map { |g| { id: g.id, name: g.name, gang_type: g.gang_type, color: g.color } },
+    gangs: gangs.map { |g| { id: g.id, name: g.name, gang_type: g.gang_type, color: g.color, icon_path: gang_icon_path(g) } },
     turfs: zone.turfs.map do |t|
       { id: t.id, q: t.q, r: t.r, name: t.name, description: t.description,
         gang_id: t.gang_id, home_gang_id: t.home_gang_id }

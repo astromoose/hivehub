@@ -41,6 +41,7 @@ DB.create_table? :gangs do
   String :name, null: false
   String :gang_type, null: false
   String :color, null: false
+  String :icon
   Time :created_at
 end
 
@@ -59,6 +60,8 @@ end
 
 # Lightweight migration for databases created before season archiving.
 DB.alter_table(:zones) { add_column :archived_at, Time } unless DB[:zones].columns.include?(:archived_at)
+# Lightweight migration for databases created before gang icons.
+DB.alter_table(:gangs) { add_column :icon, String } unless DB[:gangs].columns.include?(:icon)
 
 class User < Sequel::Model
   one_to_many :campaigns

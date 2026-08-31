@@ -2,6 +2,7 @@
 
 require_relative "models"
 require_relative "flavour"
+require_relative "icons"
 
 # Generates zones (seasons) as random connected hexmaps of 12-20 turfs,
 # and assigns gang home turf on map edges.
@@ -89,7 +90,7 @@ module Generator
 
     color = GANG_COLORS[campaign.gangs_dataset.count % GANG_COLORS.size]
     gang = Gang.create(campaign_id: campaign.id, name: name, gang_type: gang_type,
-                       color: color, created_at: Time.now)
+                       color: color, icon: Icons.for_gang_type(gang_type), created_at: Time.now)
     assign_home(zone, gang, rng)
     gang
   end

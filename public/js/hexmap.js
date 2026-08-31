@@ -35,6 +35,24 @@
     return state.gangs.find((g) => g.id === id) || null;
   }
 
+  // Pick a dark or light icon tint depending on the fill's luminance.
+  function contrastColor(hex) {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+    return 0.299 * r + 0.587 * g + 0.114 * b > 140 ? "#241d2e" : "#f0e6d2";
+  }
+
+  function iconEl(gang, x, y, size) {
+    if (!gang.icon_path) return null;
+    const path = el("path", {
+      d: gang.icon_path,
+      fill: contrastColor(gang.color),
+      "fill-opacity": "0.9",
+      transform: `translate(${x - size / 2} ${y - size / 2}) scale(${size / 512})`,
+      "pointer-events": "none",
+    });
+    return path;
+  }
+
   function el(tag, attrs, text) {
     const node = document.createElementNS(NS, tag);
     for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
@@ -76,9 +94,14 @@
       poly.addEventListener("mouseleave", hideTooltip);
       svg.appendChild(poly);
 
+      if (gang) {
+        const icon = iconEl(gang, c.x, c.y - SIZE * 0.45, 30);
+        if (icon) svg.appendChild(icon);
+      }
+
       if (t.home_gang_id && t.home_gang_id === t.gang_id) {
         svg.appendChild(el("text", {
-          x: c.x, y: c.y - SIZE * 0.35,
+          x: c.x, y: c.y + SIZE * 0.72,
           "text-anchor": "middle", class: "hex-home",
         }, "⌂"));
       }
@@ -126,11 +149,17 @@
     tooltip.hidden = true;
   }
 
+  function legendIcon(gang, size) {
+    const s = el("svg", { width: size, height: size, viewBox: "0 0 512 512", class: "legend-icon" });
+    s.appendChild(el("path", { d: gang.icon_path, fill: gang.color }));
+    return s;
+  }
+
   function renderLegend() {
     legendEl.innerHTML = "";
     const entries = state.gangs.map((g) => {
       const held = state.turfs.filter((t) => t.gang_id === g.id).length;
-      return { color: g.color, label: g.name, sub: `${g.gang_type} · ${held} turf${held === 1 ? "" : "s"}` };
+      return { color: g.color, gang: g, label: g.name, sub: `${g.gang_type} · ${held} turf${held === 1 ? "" : "s"}` };
     });
     const nml = state.turfs.filter((t) => !t.gang_id).length;
     entries.push({ color: NO_MANS, label: "No-man's-land", sub: `${nml} turf${nml === 1 ? "" : "s"}` });
@@ -140,13 +169,15 @@
       const sw = document.createElement("span");
       sw.className = "swatch";
       sw.style.background = entry.color;
+      li.appendChild(sw);
+      if (entry.gang && entry.gang.icon_path) li.appendChild(legendIcon(entry.gang, 16));
       const name = document.createElement("span");
       name.className = "gang-name";
       name.textContent = entry.label;
       const sub = document.createElement("span");
       sub.className = "muted small";
       sub.textContent = entry.sub;
-      li.append(sw, name, sub);
+      li.append(name, sub);
       legendEl.appendChild(li);
     }
   }
@@ -190,7 +221,9 @@
       const sw = document.createElement("span");
       sw.className = "swatch";
       sw.style.background = opt.color;
-      btn.append(sw, document.createTextNode(opt.name));
+      btn.appendChild(sw);
+      if (opt.icon_path) btn.appendChild(legendIcon(opt, 14));
+      btn.appendChild(document.createTextNode(opt.name));
       btn.addEventListener("click", () => assign(t.id, opt.id));
       li.appendChild(btn);
       list.appendChild(li);
