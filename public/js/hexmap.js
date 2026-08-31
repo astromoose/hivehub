@@ -83,11 +83,11 @@
       const line2 = words.slice(Math.ceil(words.length / 2)).join(" ");
       svg.appendChild(el("text", {
         x: c.x, y: c.y + 2, "text-anchor": "middle", class: "hex-label",
-      }, truncate(line1, 12)));
+      }, truncate(line1, 14)));
       if (line2) {
         svg.appendChild(el("text", {
-          x: c.x, y: c.y + 15, "text-anchor": "middle", class: "hex-label",
-        }, truncate(line2, 12)));
+          x: c.x, y: c.y + 13, "text-anchor": "middle", class: "hex-label",
+        }, truncate(line2, 14)));
       }
     }
 
