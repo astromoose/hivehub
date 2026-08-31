@@ -18,3 +18,23 @@
   <% end %>
   <p class="muted small">No credentials? <a href="/register">Petition for access</a>.</p>
 </section>
+
+<section class="panel census-panel">
+  <h2>Guilder Census</h2>
+  <% census = hive_census %>
+  <div class="census-grid">
+    <div class="census-stat">
+      <span class="census-num"><%= census[:arbitrators] %></span>
+      <span class="census-label">Arbitrator<%= "s" unless census[:arbitrators] == 1 %></span>
+    </div>
+    <div class="census-stat">
+      <span class="census-num"><%= census[:campaigns] %></span>
+      <span class="census-label">Campaign<%= "s" unless census[:campaigns] == 1 %></span>
+    </div>
+    <div class="census-stat">
+      <span class="census-num"><%= census[:gangs] %></span>
+      <span class="census-label">Gang<%= "s" unless census[:gangs] == 1 %></span>
+    </div>
+  </div>
+  <p class="muted small census-note">Figures certified by the Merchant Guild. Discrepancies are punishable.</p>
+</section>

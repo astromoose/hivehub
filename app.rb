@@ -99,6 +99,13 @@ get "/suggest/gang" do
   json name: Flavour.gang_name(params[:gang_type])
 end
 
+helpers do
+  # Global usage figures for the login-page census box.
+  def hive_census
+    { arbitrators: User.count, campaigns: Campaign.count, gangs: Gang.count }
+  end
+end
+
 get "/login" do
   redirect "/dashboard" if current_user
   erb :login

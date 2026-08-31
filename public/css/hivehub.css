@@ -208,6 +208,17 @@ input:focus, select:focus { outline: 1px solid var(--color-4); }
 
 .auth-panel { max-width: 26rem; margin: 3rem auto; }
 .auth-panel .btn { width: 100%; }
+.census-panel { max-width: 26rem; margin: 0 auto 3rem; text-align: center; }
+.census-grid { display: flex; justify-content: space-around; gap: 0.5rem; margin-top: 0.8rem; }
+.census-stat { display: flex; flex-direction: column; gap: 0.15rem; }
+.census-num {
+  font-family: "Electrolize", "Courier New", monospace;
+  font-size: 1.9rem;
+  color: var(--bright-4);
+  text-shadow: 0 0 12px rgba(107, 158, 157, 0.45);
+}
+.census-label { text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.12em; color: var(--text-dim); }
+.census-note { margin-top: 0.9rem; }
 
 /* ---- cards & lists ---- */
 
