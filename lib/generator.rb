@@ -5,7 +5,8 @@ require_relative "flavour"
 require_relative "territories"
 require_relative "icons"
 
-# Generates zones (seasons) as random connected hexmaps of 12-20 turfs,
+# Generates zones (seasons) as random connected hexmaps sized by the
+# Dominion territory table (3 turfs per gang, min 3 gangs, +2-6 extra),
 # and assigns gang home turf on map edges.
 module Generator
   AXIAL_DIRS = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]].freeze
@@ -37,15 +38,53 @@ module Generator
     neighbours(*cell).any? { |n| !cells_set.include?(n) }
   end
 
-  # Creates a new zone (season) for the campaign, with 12-20 turfs.
-  # Guarantees >= 50% no-man's-land: turf count is at least twice the gang
-  # count, and every existing gang gets a home on a map edge.
+  # Expands an existing zone's map to `target` turfs by frontier growth,
+  # dealing fresh territory types for the new ground.
+  def grow_zone(zone, target, rng = Random)
+    turfs = zone.turfs_dataset.all
+    add = target - turfs.size
+    return zone if add <= 0
+
+    cells = turfs.to_h { |t| [[t.q, t.r], true] }
+    frontier = cells.keys.flat_map { |c| neighbours(*c) }.reject { |c| cells[c] }
+    new_cells = []
+    while new_cells.size < add
+      cell = frontier.sample(random: rng)
+      next if cells[cell]
+
+      cells[cell] = true
+      new_cells << cell
+      frontier.concat(neighbours(*cell).reject { |n| cells[n] })
+      frontier.reject! { |n| cells[n] }
+    end
+
+    types = Territories.deal(add, rng)
+    used_prefixes = turfs.map { |t| t.name.split(" ", 2).first }
+    prefixes = (Flavour::TURF_PREFIX - used_prefixes).sample(add, random: rng)
+    descs = Flavour.turf_descriptions(add, rng)
+    new_cells.each_with_index do |(q, r), i|
+      Turf.create(zone_id: zone.id, q: q, r: r, name: "#{prefixes[i]} #{types[i]}",
+                  description: descs[i], territory_type: types[i], created_at: Time.now)
+    end
+    zone
+  end
+
+  # Dominion territories per gang, per the N26 rulebook table
+  # (3 players → 9, 4 → 12, ... i.e. three per player), assuming a minimum
+  # of 3 players, plus 2-6 extra turfs of Arbitrator's discretion.
+  TERRITORIES_PER_GANG = 3
+  MIN_GANGS_FOR_SIZING = 3
+  EXTRA_TURFS = (2..6).freeze
+  MAX_GANGS = 10 # distinct gang colours
+
+  # Creates a new zone (season) for the campaign, sized per the Dominion
+  # territory table for the campaign's gang count. Guarantees >= 50%
+  # no-man's-land and gives every existing gang a home on a map edge.
   def generate_zone(campaign, rng = Random)
     gangs = campaign.gangs_dataset.order(:created_at).all
-    raise "Too many gangs for a 20-turf map (max 10)" if gangs.size > 10
+    raise "Too many gangs (max #{MAX_GANGS})" if gangs.size > MAX_GANGS
 
-    min_turfs = [12, gangs.size * 2].max
-    count = rng.rand(min_turfs..20)
+    count = TERRITORIES_PER_GANG * [MIN_GANGS_FOR_SIZING, gangs.size].max + rng.rand(EXTRA_TURFS)
     season = (campaign.zones_dataset.max(:season) || 0) + 1
 
     zone = Zone.create(
@@ -86,10 +125,16 @@ module Generator
   end
 
   # Adds a gang to a campaign and gives it a home on the latest zone.
-  # Enforces the 50% no-man's-land rule at generation/addition time.
+  # The map grows to the Dominion table size for the new gang count if
+  # needed, and the 50% no-man's-land rule is enforced.
   def add_gang(campaign, name:, gang_type:, rng: Random)
     zone = campaign.latest_zone
     raise "No active season: chart a new zone before adding gangs" unless zone
+    raise "Campaign is full (max #{MAX_GANGS} gangs)" if campaign.gangs_dataset.count >= MAX_GANGS
+
+    gangs_after = campaign.gangs_dataset.count + 1
+    min_size = TERRITORIES_PER_GANG * [MIN_GANGS_FOR_SIZING, gangs_after].max + EXTRA_TURFS.min
+    grow_zone(zone, min_size, rng)
 
     turf_count = zone.turfs_dataset.count
     claimed = zone.turfs_dataset.exclude(gang_id: nil).count

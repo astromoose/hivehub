@@ -38,7 +38,11 @@ module Flavour
     "Collapsed", "Rusted", "Flooded", "Derelict", "Smog-choked", "Rad-scarred",
     "Abandoned", "Shattered", "Crumbling", "Blistered", "Half-lit", "Forsaken",
     "Leaking", "Scav-picked", "Burnt-out", "Creaking", "Sunken", "Sealed",
-    "Howling", "Toxic"
+    "Howling", "Toxic", "Festering", "Ash-blown", "Gutted", "Fume-wreathed",
+    "Corroded", "Blacked-out", "Plague-marked", "Rat-gnawed", "Slumping",
+    "Ruptured", "Grease-slick", "Bullet-pocked", "Moss-eaten", "Sputtering",
+    "Cursed", "Dust-shrouded", "Ramshackle", "Sump-stained", "Wailing",
+    "Threadbare"
   ].freeze
 
   TURF_DESCRIPTIONS = [
