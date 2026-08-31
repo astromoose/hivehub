@@ -58,6 +58,11 @@
     const minY = Math.min(...ys) - pad, maxY = Math.max(...ys) + pad;
     svg.setAttribute("viewBox", `${minX} ${minY} ${maxX - minX} ${maxY - minY}`);
 
+    // Cap on-screen hex size so tall, narrow maps don't render huge:
+    // limit the SVG's width to ~104px per hex-column of viewBox width.
+    const MAX_PX_PER_HEX = 104;
+    svg.style.maxWidth = `${((maxX - minX) / (SIZE * Math.sqrt(3))) * MAX_PX_PER_HEX}px`;
+
     for (const { t, c } of centers) {
       const gang = gangById(t.gang_id);
       const poly = el("polygon", {

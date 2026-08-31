@@ -212,7 +212,7 @@ input:focus, select:focus { outline: 1px solid var(--color-4); }
 @media (max-width: 900px) { .map-layout { grid-template-columns: 1fr; } }
 
 .map-panel { position: relative; }
-#hexmap { width: 100%; height: auto; display: block; }
+#hexmap { width: 100%; height: auto; display: block; margin: 0 auto; }
 
 .hex {
   stroke: var(--line);
