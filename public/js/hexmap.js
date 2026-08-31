@@ -11,7 +11,7 @@
   const detailEl = document.getElementById("turf-detail");
   const NS = "http://www.w3.org/2000/svg";
   const SIZE = 52; // hex radius
-  const NO_MANS = "#241d2e";
+  const NO_MANS = "#2c2438";
 
   let state = { turfs: [], gangs: [], selectedId: null };
 
@@ -64,7 +64,7 @@
         points: hexPoints(c.x, c.y),
         class: "hex" + (t.id === state.selectedId ? " selected" : ""),
         fill: gang ? gang.color : NO_MANS,
-        "fill-opacity": gang ? "0.85" : "1",
+        "fill-opacity": "1",
       });
       poly.addEventListener("click", () => selectTurf(t.id));
       poly.addEventListener("mousemove", (e) => showTooltip(e, t));

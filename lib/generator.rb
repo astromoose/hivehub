@@ -8,9 +8,9 @@ require_relative "flavour"
 module Generator
   AXIAL_DIRS = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]].freeze
 
-  # Gang colours: base palette + darkened variants for gangs 6-10.
+  # Gang colours: base palette + lightened variants for gangs 6-10.
   PALETTE = %w[#4a3b59 #a67d99 #c3b298 #6b9e9d #3b5a7d].freeze
-  GANG_COLORS = (PALETTE + PALETTE.map { |c| shade = c[1..].scan(/../).map { |h| (h.to_i(16) * 0.55).round.clamp(0, 255) }; format("#%02x%02x%02x", *shade) }).freeze
+  GANG_COLORS = (PALETTE + PALETTE.map { |c| tint = c[1..].scan(/../).map { |h| v = h.to_i(16); (v + (255 - v) * 0.4).round }; format("#%02x%02x%02x", *tint) }).freeze
 
   module_function
 
