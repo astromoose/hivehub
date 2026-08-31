@@ -16,6 +16,11 @@ Idle footprint is ~400 MB RAM — enormous headroom on 4 GB.
    - Image: **Ubuntu 24.04**
    - Type: Shared vCPU → x86 → **CX23**
    - Networking: **IPv4 + IPv6** (IPv4 is the €0.50/mo that keeps life simple)
+   - Volumes: none needed — the included 40 GB NVMe is plenty
+   - Firewall: optional; `setup.sh` configures ufw on the host. A free
+     Hetzner Cloud Firewall allowing TCP 22/80/443 is a fine extra layer
+   - Backups: optional (+20% ≈ €1.20/mo) — the app already snapshots its
+     database daily
    - SSH key: select yours
 4. Note the server's IPv4 and IPv6 addresses.
 
@@ -32,8 +37,10 @@ records you care about yet):
    - `A` — name `hivehub`, value `<server IPv4>`
    - `AAAA` — name `hivehub`, value `<server IPv6>`
 
-**Option B — keep your current DNS provider**: just add the same `A`/`AAAA`
-records for `hivehub.dirtyblades.com` there.
+**Option B — keep your current DNS provider** (e.g. Hover): just add the same
+`A`/`AAAA` records for `hivehub.dirtyblades.com` there. On Hover: domain →
+**DNS** → **Add a record** → type `A`, hostname `hivehub`, value = server
+IPv4; repeat with type `AAAA` for the server IPv6.
 
 Nameserver changes can take a few hours to propagate; the records themselves
 are fast.
