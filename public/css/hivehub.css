@@ -15,6 +15,8 @@
   --text: #ddd0b8;
   --text-dim: #a3968a;
   --danger: #c96a50;
+  --hazard-y: #caa338;
+  --hazard-k: #17121c;
 }
 
 * { box-sizing: border-box; }
@@ -81,12 +83,23 @@ main { flex: 1; width: min(1200px, 96vw); margin: 1.4rem auto; }
 /* ---- panels & typography ---- */
 
 .panel {
+  position: relative;
   background: var(--bg-panel);
   border: 1px solid var(--line);
-  border-left: 3px solid var(--color-1);
-  padding: 1.2rem 1.4rem;
+  border-left: none;
+  padding: 1.2rem 1.4rem 1.2rem 1.7rem;
   margin-bottom: 1.2rem;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.45);
+}
+.panel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: repeating-linear-gradient(-45deg, var(--hazard-y) 0 8px, var(--hazard-k) 8px 16px);
+  opacity: 0.75;
 }
 
 h1, h2, h3 {
@@ -105,13 +118,24 @@ a { color: var(--bright-4); }
 .breadcrumbs { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.6rem; }
 
 .flash, .error {
+  position: relative;
   background: rgba(201, 106, 80, 0.18);
   border: 1px solid var(--danger);
+  border-top: none;
   color: #eab09c;
-  padding: 0.6rem 1rem;
+  padding: 0.75rem 1rem 0.6rem;
   margin: 0.8rem auto;
   width: min(1200px, 96vw);
   font-size: 0.9rem;
+}
+.flash::before, .error::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: repeating-linear-gradient(-45deg, var(--hazard-y) 0 8px, var(--hazard-k) 8px 16px);
 }
 .error { width: auto; margin: 0.8rem 0; }
 
@@ -150,7 +174,13 @@ input:focus, select:focus { outline: 1px solid var(--color-4); }
 .btn:hover { background: var(--color-5); border-color: var(--bright-4); }
 .btn.primary { border-color: var(--bright-4); }
 .btn.github { background: #24292f; border-color: var(--bright-4); }
-.btn.danger { background: transparent; border-color: var(--danger); color: var(--danger); }
+.btn.danger {
+  background: transparent;
+  color: var(--danger);
+  border: 3px solid transparent;
+  border-image: repeating-linear-gradient(-45deg, var(--hazard-y) 0 7px, var(--hazard-k) 7px 14px) 3;
+}
+.btn.danger:hover { background: rgba(202, 163, 56, 0.12); filter: brightness(1.15); }
 .small-btn { padding: 0.25rem 0.6rem; font-size: 0.7rem; }
 
 .inline-form { display: inline; }
@@ -183,7 +213,17 @@ input:focus, select:focus { outline: 1px solid var(--color-4); }
 .card-title:hover { color: var(--bright-2); }
 .card-meta { color: var(--text-dim); font-size: 0.75rem; margin: 0.4rem 0; }
 .card-actions { display: flex; gap: 0.5rem; margin-top: 0.3rem; }
-.card.archived { opacity: 0.6; border-style: dashed; }
+.card.archived { position: relative; overflow: hidden; opacity: 0.65; border-style: dashed; padding-top: 1.3rem; }
+.card.archived::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: repeating-linear-gradient(-45deg, var(--hazard-y) 0 10px, var(--hazard-k) 10px 20px);
+  opacity: 0.55;
+}
 .archive-heading { margin-top: 1.4rem; color: var(--text-dim); }
 .archive-badge {
   display: inline-block;
@@ -203,6 +243,10 @@ input:focus, select:focus { outline: 1px solid var(--color-4); }
 .gang-list li { display: flex; align-items: center; gap: 0.6rem; }
 .gang-name { color: var(--bright-3); }
 .gang-icon, .legend-icon { flex-shrink: 0; vertical-align: middle; }
+.swatch-nml {
+  background-image: repeating-linear-gradient(-45deg, rgba(202, 163, 56, 0.35) 0 3px, transparent 3px 6px) !important;
+  background-color: var(--bg-raised) !important;
+}
 .swatch {
   width: 1rem; height: 1rem;
   display: inline-block;

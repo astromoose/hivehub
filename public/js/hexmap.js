@@ -68,6 +68,17 @@
     svg.innerHTML = "";
     if (!state.turfs.length) return;
 
+    // Faint hazard hatching for unclaimed ground.
+    const defs = el("defs", {});
+    const pat = el("pattern", {
+      id: "nml-hatch", patternUnits: "userSpaceOnUse",
+      width: 18, height: 18, patternTransform: "rotate(-45)",
+    });
+    pat.appendChild(el("rect", { width: 18, height: 18, fill: NO_MANS }));
+    pat.appendChild(el("rect", { width: 9, height: 18, fill: "rgba(202, 163, 56, 0.09)" }));
+    defs.appendChild(pat);
+    svg.appendChild(defs);
+
     const centers = state.turfs.map((t) => ({ t, c: hexCenter(t.q, t.r) }));
     const pad = SIZE * 1.3;
     const xs = centers.map((o) => o.c.x);
@@ -86,7 +97,7 @@
       const poly = el("polygon", {
         points: hexPoints(c.x, c.y),
         class: "hex" + (t.id === state.selectedId ? " selected" : ""),
-        fill: gang ? gang.color : NO_MANS,
+        fill: gang ? gang.color : "url(#nml-hatch)",
         "fill-opacity": "1",
       });
       poly.addEventListener("click", () => selectTurf(t.id));
@@ -162,13 +173,14 @@
       return { color: g.color, gang: g, label: g.name, sub: `${g.gang_type} · ${held} turf${held === 1 ? "" : "s"}` };
     });
     const nml = state.turfs.filter((t) => !t.gang_id).length;
-    entries.push({ color: NO_MANS, label: "No-man's-land", sub: `${nml} turf${nml === 1 ? "" : "s"}` });
+    entries.push({ color: NO_MANS, hatch: true, label: "No-man's-land", sub: `${nml} turf${nml === 1 ? "" : "s"}` });
 
     for (const entry of entries) {
       const li = document.createElement("li");
       const sw = document.createElement("span");
       sw.className = "swatch";
       sw.style.background = entry.color;
+      if (entry.hatch) sw.classList.add("swatch-nml");
       li.appendChild(sw);
       if (entry.gang && entry.gang.icon_path) li.appendChild(legendIcon(entry.gang, 16));
       const name = document.createElement("span");
@@ -213,7 +225,7 @@
     const list = document.createElement("ul");
     list.className = "assign-list";
 
-    const options = [{ id: null, name: "No-man's-land", color: NO_MANS }].concat(state.gangs);
+    const options = [{ id: null, name: "No-man's-land", color: NO_MANS, hatch: true }].concat(state.gangs);
     for (const opt of options) {
       const li = document.createElement("li");
       const btn = document.createElement("button");
@@ -221,6 +233,7 @@
       const sw = document.createElement("span");
       sw.className = "swatch";
       sw.style.background = opt.color;
+      if (opt.hatch) sw.classList.add("swatch-nml");
       btn.appendChild(sw);
       if (opt.icon_path) btn.appendChild(legendIcon(opt, 14));
       btn.appendChild(document.createTextNode(opt.name));
