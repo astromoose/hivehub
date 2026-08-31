@@ -164,16 +164,31 @@ the Caddy apt repo, Ubuntu mirrors, Let's Encrypt and mundamanager.com.
 **Fix: public NAT64/DNS64** ([nat64.net](https://nat64.net), free). The
 resolvers synthesize IPv6 addresses for IPv4-only hosts and relay traffic;
 TLS certificate validation stays end-to-end, so the relay can't tamper with
-git or OAuth traffic:
+git or OAuth traffic.
+
+Beware: setting global `DNS=` in `resolved.conf` is **not enough**. Hetzner's
+cloud-init netplan attaches Hetzner's own DNS servers to `eth0` with
+`DefaultRoute: yes`, and systemd-resolved prefers per-link servers — so
+lookups flip-flop between DNS64 and plain answers (symptom: git works one
+minute, `Errno::ENETUNREACH` for github.com the next). Override the link
+DNS in netplan instead:
 
 ```bash
-mkdir -p /etc/systemd/resolved.conf.d
-cat > /etc/systemd/resolved.conf.d/nat64.conf <<'EOF'
-[Resolve]
-DNS=2a01:4f9:c010:3f02::1 2a00:1098:2c::1 2a00:1098:2b::1
+cat > /etc/netplan/60-nat64.yaml <<'EOF'
+network:
+  version: 2
+  ethernets:
+    eth0:
+      nameservers:
+        addresses:
+          - 2a01:4f9:c010:3f02::1
+          - 2a00:1098:2c::1
+          - 2a00:1098:2b::1
 EOF
-systemctl restart systemd-resolved
-getent hosts github.com    # now returns a synthesized IPv6 address
+chmod 600 /etc/netplan/60-nat64.yaml
+netplan apply
+getent ahosts github.com   # first line must be a synthesized IPv6 address
+resolvectl status          # eth0 should now list only the NAT64 resolvers
 ```
 
 If cloud-init failed before this was in place, re-run provisioning
