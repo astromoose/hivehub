@@ -1,0 +1,23 @@
+[Unit]
+Description=HIVEHUB — Necromunda campaign map manager
+After=network.target
+
+[Service]
+Type=simple
+User=hivehub
+Group=hivehub
+WorkingDirectory=/opt/hivehub
+EnvironmentFile=/etc/hivehub.env
+ExecStart=/bin/sh -c 'exec "$(command -v bundle)" exec puma -e production -b tcp://127.0.0.1:9292 config.ru'
+Restart=always
+RestartSec=5
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/hivehub
+
+[Install]
+WantedBy=multi-user.target

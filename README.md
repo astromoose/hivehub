@@ -68,6 +68,11 @@ username/password auth is available.
 - New seasons re-chart the map: gangs carry over and receive fresh home turf
 - Arbitrators can reassign any turf by clicking a hex on the map
 
+## Deployment
+
+See [DEPLOY.md](DEPLOY.md) for running HIVEHUB on a small Hetzner Cloud VPS
+(Caddy + Puma + systemd, ~€6/month).
+
 ## Munda Manager integration
 
 HIVEHUB campaigns can link to a [Munda Manager](https://www.mundamanager.com)

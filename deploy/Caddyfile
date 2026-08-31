@@ -1,0 +1,6 @@
+# HIVEHUB Caddyfile — automatic HTTPS via Let's Encrypt.
+# Installed to /etc/caddy/Caddyfile by deploy/setup.sh (domain substituted).
+HIVEHUB_DOMAIN {
+	encode gzip
+	reverse_proxy 127.0.0.1:9292
+}

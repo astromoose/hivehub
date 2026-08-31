@@ -1,0 +1,9 @@
+[Unit]
+Description=HIVEHUB SQLite backup
+
+[Service]
+Type=oneshot
+User=hivehub
+ExecStart=/usr/bin/sqlite3 /var/lib/hivehub/hivehub.sqlite3 ".backup /var/lib/hivehub/backups/hivehub-daily.sqlite3"
+ExecStartPost=/bin/sh -c 'cp /var/lib/hivehub/backups/hivehub-daily.sqlite3 /var/lib/hivehub/backups/hivehub-$(date +%%F).sqlite3'
+ExecStartPost=/usr/bin/find /var/lib/hivehub/backups -name "hivehub-2*.sqlite3" -mtime +14 -delete
