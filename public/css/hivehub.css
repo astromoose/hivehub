@@ -74,6 +74,9 @@ main { flex: 1; width: min(1200px, 96vw); margin: 1.4rem auto; }
 .vox-footer .quote { color: var(--bright-3); font-style: italic; }
 .vox-footer .attribution { color: var(--text-dim); font-size: 0.8rem; margin-top: 0.3rem; }
 .vox-footer .fine-print { color: #6f6280; font-size: 0.65rem; margin-top: 0.9rem; letter-spacing: 0.12em; }
+.vox-footer .disclaimer { max-width: 44rem; margin-left: auto; margin-right: auto; margin-top: 0.5rem; letter-spacing: 0.04em; line-height: 1.5; }
+.vox-footer .support-link { margin-top: 0.8rem; font-size: 0.8rem; }
+.vox-footer .support-link a { color: var(--bright-4); }
 
 /* ---- panels & typography ---- */
 

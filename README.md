@@ -3,6 +3,14 @@
 A grimdark web-based campaign map manager for **Necromunda** (N26 ruleset).
 Built for Arbitrators to manage gang territory across campaign seasons.
 
+> **Disclaimer**: Necromunda, Warhammer 40,000 and all associated names,
+> marks and settings are the intellectual property of Games Workshop Ltd.
+> HIVEHUB is an unofficial, non-commercial fan-made tool for gamers and is
+> in no way endorsed by or affiliated with Games Workshop.
+
+If you find it useful, you can
+[support this site's running costs](https://buymeacoffee.com/astromoose). ☕
+
 ## Stack
 
 - Ruby + Sinatra
