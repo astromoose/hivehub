@@ -144,3 +144,59 @@ systemctl list-timers hivehub-*   # backup schedule
 | Hetzner DNS | 0 |
 | TLS (Let's Encrypt via Caddy) | 0 |
 | **Total** | **5.99** (~€7.13 incl. 19% VAT) |
+
+Going IPv6-only saves the €0.50/mo IPv4 fee — see the appendix below for
+what that entails.
+
+## Appendix: IPv6-only survival guide
+
+Running without a primary IPv4 works, with caveats. Field notes:
+
+**The console shows a prefix, not an address.** `2a01:4f8:xxxx:xxxx::/64` is
+the whole subnet routed to your VM; the host itself answers on
+`2a01:4f8:xxxx:xxxx::1`. SSH to that.
+
+**github.com has no IPv6.** The cloud-init `git clone` (and any
+`update.sh` pull, and GitHub OAuth's server-side token exchange) fails on an
+IPv6-only box. Everything else HIVEHUB needs is dual-stack: rubygems.org,
+the Caddy apt repo, Ubuntu mirrors, Let's Encrypt and mundamanager.com.
+
+**Fix: public NAT64/DNS64** ([nat64.net](https://nat64.net), free). The
+resolvers synthesize IPv6 addresses for IPv4-only hosts and relay traffic;
+TLS certificate validation stays end-to-end, so the relay can't tamper with
+git or OAuth traffic:
+
+```bash
+mkdir -p /etc/systemd/resolved.conf.d
+cat > /etc/systemd/resolved.conf.d/nat64.conf <<'EOF'
+[Resolve]
+DNS=2a01:4f9:c010:3f02::1 2a00:1098:2c::1 2a00:1098:2b::1
+EOF
+systemctl restart systemd-resolved
+getent hosts github.com    # now returns a synthesized IPv6 address
+```
+
+If cloud-init failed before this was in place, re-run provisioning
+afterwards:
+
+```bash
+apt-get update && apt-get install -y git
+git clone https://github.com/astromoose/hivehub.git /opt/hivehub
+DOMAIN=hivehub.dirtyblades.com bash /opt/hivehub/deploy/setup.sh
+```
+
+**DNS records**: just the `AAAA` (`hivehub` → `...::1`). Let's Encrypt
+validates over IPv6, so Caddy's certificate works fine.
+
+**Who can't reach you**: visitors on IPv4-only networks (still a meaningful
+share of ISPs, most corporate networks, many mobile carriers). If that ever
+matters, put the domain behind Cloudflare's free tier and proxy the `AAAA`
+record (orange cloud) — their dual-stack edge gives IPv4 users a way in.
+That requires moving the domain's nameservers to Cloudflare (Hover stays
+registrar). Alternatively, attach a primary IPv4 later: power off →
+**Networking → Attach a Primary IP** → power on, then add the `A` record.
+
+**Your own access**: SSH from an IPv4-only network won't reach the box.
+Check your connectivity with `curl -6 -s https://ifconfig.co`; the Hetzner
+console's web terminal is the escape hatch when stuck somewhere without
+IPv6.
