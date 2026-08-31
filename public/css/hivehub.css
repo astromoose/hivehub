@@ -179,6 +179,19 @@ input:focus, select:focus { outline: 1px solid var(--color-4); }
 .card-title { font-size: 1.05rem; color: var(--bright-3); text-decoration: none; }
 .card-title:hover { color: var(--bright-2); }
 .card-meta { color: var(--text-dim); font-size: 0.75rem; margin: 0.4rem 0; }
+.card-actions { display: flex; gap: 0.5rem; margin-top: 0.3rem; }
+.card.archived { opacity: 0.6; border-style: dashed; }
+.archive-heading { margin-top: 1.4rem; color: var(--text-dim); }
+.archive-badge {
+  display: inline-block;
+  border: 1px solid var(--text-dim);
+  color: var(--text-dim);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 0.15rem 0.45rem;
+  vertical-align: middle;
+}
 
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
 @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }

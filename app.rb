@@ -213,6 +213,24 @@ end
 
 # ---------- Zones & turf ----------
 
+post "/zones/:id/archive" do
+  require_login!
+  zone = own_zone!(params[:id])
+  zone.update(archived_at: zone.archived? ? nil : Time.now)
+  session[:flash] = zone.archived? ? "Season #{zone.season} consigned to the archives." : "Season #{zone.season} restored to active record."
+  redirect "/campaigns/#{zone.campaign_id}"
+end
+
+post "/zones/:id/delete" do
+  require_login!
+  zone = own_zone!(params[:id])
+  campaign_id = zone.campaign_id
+  zone.turfs_dataset.delete
+  zone.delete
+  session[:flash] = "Season #{zone.season} purged from the Guilder charts."
+  redirect "/campaigns/#{campaign_id}"
+end
+
 get "/zones/:id" do
   require_login!
   @zone = own_zone!(params[:id])

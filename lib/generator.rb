@@ -44,7 +44,7 @@ module Generator
 
     min_turfs = [12, gangs.size * 2].max
     count = rng.rand(min_turfs..20)
-    season = (campaign.latest_zone&.season || 0) + 1
+    season = (campaign.zones_dataset.max(:season) || 0) + 1
 
     zone = Zone.create(
       campaign_id: campaign.id,
@@ -81,7 +81,7 @@ module Generator
   # Enforces the 50% no-man's-land rule at generation/addition time.
   def add_gang(campaign, name:, gang_type:, rng: Random)
     zone = campaign.latest_zone
-    raise "Generate a zone map before adding gangs" unless zone
+    raise "No active season: chart a new zone before adding gangs" unless zone
 
     turf_count = zone.turfs_dataset.count
     claimed = zone.turfs_dataset.exclude(gang_id: nil).count

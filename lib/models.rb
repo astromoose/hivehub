@@ -31,6 +31,7 @@ DB.create_table? :zones do
   String :name, null: false
   Integer :season, null: false
   String :description
+  Time :archived_at
   Time :created_at
 end
 
@@ -56,6 +57,9 @@ DB.create_table? :turfs do
   unique %i[zone_id q r]
 end
 
+# Lightweight migration for databases created before season archiving.
+DB.alter_table(:zones) { add_column :archived_at, Time } unless DB[:zones].columns.include?(:archived_at)
+
 class User < Sequel::Model
   one_to_many :campaigns
 end
@@ -65,12 +69,15 @@ class Campaign < Sequel::Model
   one_to_many :zones, order: :season
   one_to_many :gangs, order: :created_at
 
-  def latest_zone = zones_dataset.order(Sequel.desc(:season)).first
+  # Latest non-archived season; new gangs get their home turf here.
+  def latest_zone = zones_dataset.where(archived_at: nil).order(Sequel.desc(:season)).first
 end
 
 class Zone < Sequel::Model
   many_to_one :campaign
   one_to_many :turfs
+
+  def archived? = !archived_at.nil?
 end
 
 class Gang < Sequel::Model

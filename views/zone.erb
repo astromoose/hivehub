@@ -5,7 +5,7 @@
     <a href="/campaigns/<%= @campaign.id %>"><%= h @campaign.name %></a> /
     Season <%= @zone.season %>
   </div>
-  <h1><%= h @zone.name %></h1>
+  <h1><%= h @zone.name %> <% if @zone.archived? %><span class="archive-badge">Archived</span><% end %></h1>
   <p class="muted"><%= h @zone.description %></p>
 </section>
 

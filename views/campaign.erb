@@ -9,18 +9,50 @@
   <section class="panel">
     <h2>Seasons</h2>
     <p class="muted small">Each season charts a new zone of the underhive. Gangs carry over; turf does not.</p>
+    <% active, archived = @zones.partition { |z| !z.archived? } %>
     <ul class="card-list">
-      <% @zones.each do |z| %>
+      <% active.each do |z| %>
         <li class="card">
           <a class="card-title" href="/zones/<%= z.id %>">Season <%= z.season %>: <%= h z.name %></a>
           <p class="muted small"><%= h z.description %></p>
           <div class="card-meta"><%= z.turfs_dataset.count %> turfs · <%= z.turfs_dataset.exclude(gang_id: nil).count %> claimed</div>
+          <div class="card-actions">
+            <form method="post" action="/zones/<%= z.id %>/archive" class="inline-form">
+              <button type="submit" class="btn small-btn">Archive</button>
+            </form>
+            <form method="post" action="/zones/<%= z.id %>/delete" class="inline-form" onsubmit="return confirm('Purge this season and all its turf from the record? This cannot be undone.')">
+              <button type="submit" class="btn danger small-btn">Purge</button>
+            </form>
+          </div>
         </li>
+      <% end %>
+      <% if active.empty? %>
+        <li class="empty-state">No active season. Chart a new zone below.</li>
       <% end %>
     </ul>
     <form method="post" action="/campaigns/<%= @campaign.id %>/zones">
       <button type="submit" class="btn primary">Chart New Season</button>
     </form>
+    <% unless archived.empty? %>
+      <h3 class="archive-heading">Archived Seasons</h3>
+      <ul class="card-list">
+        <% archived.each do |z| %>
+          <li class="card archived">
+            <a class="card-title" href="/zones/<%= z.id %>">Season <%= z.season %>: <%= h z.name %></a>
+            <span class="archive-badge">Archived</span>
+            <div class="card-meta"><%= z.turfs_dataset.count %> turfs · <%= z.turfs_dataset.exclude(gang_id: nil).count %> claimed</div>
+            <div class="card-actions">
+              <form method="post" action="/zones/<%= z.id %>/archive" class="inline-form">
+                <button type="submit" class="btn small-btn">Restore</button>
+              </form>
+              <form method="post" action="/zones/<%= z.id %>/delete" class="inline-form" onsubmit="return confirm('Purge this season and all its turf from the record? This cannot be undone.')">
+                <button type="submit" class="btn danger small-btn">Purge</button>
+              </form>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
   </section>
 
   <section class="panel">
