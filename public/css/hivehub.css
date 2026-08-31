@@ -64,7 +64,6 @@ body {
 }
 
 .brand { text-decoration: none; color: var(--bright-3); font-size: 1.5rem; font-weight: bold; font-family: "Electrolize", "Courier New", ui-monospace, monospace; }
-.brand-glyph { color: var(--bright-4); }
 .brand-name { letter-spacing: 0.18em; }
 .brand-accent { color: var(--bright-2); }
 .masthead-sub { color: var(--text-dim); font-size: 0.7rem; letter-spacing: 0.14em; flex: 1; }
@@ -382,14 +381,20 @@ input:focus, select:focus { outline: 1px solid var(--color-4); }
   filter: drop-shadow(0 0 10px rgba(166, 125, 153, 0.5));
   animation: skull-bob 5.5s ease-in-out infinite;
 }
-.servo-skull .cranium { fill: var(--bright-3); }
-.servo-skull .antenna {
+.brand-skull { display: inline-block; margin-right: 0.45rem; }
+.brand-skull svg {
+  overflow: visible;
+  vertical-align: -0.35em;
+  filter: drop-shadow(0 0 6px rgba(166, 125, 153, 0.55));
+}
+.servo-skull .cranium, .brand-skull .cranium { fill: var(--bright-3); }
+.servo-skull .antenna, .brand-skull .antenna {
   stroke: var(--text-dim);
   stroke-width: 10;
   stroke-linecap: round;
 }
-.servo-skull .antenna-tip { fill: var(--text-dim); }
-.servo-skull .servo-eye {
+.servo-skull .antenna-tip, .brand-skull .antenna-tip { fill: var(--text-dim); }
+.servo-skull .servo-eye, .brand-skull .servo-eye {
   fill: #ff5c49;
   animation: sensor-blink 2.3s steps(1, end) infinite;
   filter: drop-shadow(0 0 6px rgba(255, 92, 73, 0.9));
@@ -415,7 +420,7 @@ h1 { text-shadow: 0 0 12px rgba(227, 213, 189, 0.25); }
 .hex.selected { filter: drop-shadow(0 0 6px rgba(227, 213, 189, 0.6)); }
 
 @media (prefers-reduced-motion: reduce) {
-  .lumen.flicker, .lumen.broken, .servo-skull svg, .servo-skull .servo-eye {
+  .lumen.flicker, .lumen.broken, .servo-skull svg, .servo-skull .servo-eye, .brand-skull .servo-eye {
     animation: none;
   }
 }
