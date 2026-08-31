@@ -2,6 +2,7 @@
 
 require_relative "models"
 require_relative "flavour"
+require_relative "territories"
 require_relative "icons"
 
 # Generates zones (seasons) as random connected hexmaps of 12-20 turfs,
@@ -56,10 +57,12 @@ module Generator
     )
 
     cells = random_hexes(count, rng)
-    flavour = Flavour.turf_batch(count, rng)
+    types = Territories.deal(count, rng)
+    prefixes = Flavour.turf_prefixes(count, rng)
+    descs = Flavour.turf_descriptions(count, rng)
     cells.each_with_index do |(q, r), i|
-      name, desc = flavour[i]
-      Turf.create(zone_id: zone.id, q: q, r: r, name: name, description: desc, created_at: Time.now)
+      Turf.create(zone_id: zone.id, q: q, r: r, name: "#{prefixes[i]} #{types[i]}",
+                  description: descs[i], territory_type: types[i], created_at: Time.now)
     end
 
     gangs.each { |gang| assign_home(zone, gang, rng) }
@@ -74,7 +77,11 @@ module Generator
     raise "No unclaimed edge turf left in #{zone.name}" if candidates.empty?
 
     home = candidates.sample(random: rng)
-    home.update(gang_id: gang.id, home_gang_id: gang.id)
+    # In Dominion campaigns every gang holds a Settlement as its home
+    # territory, which cannot be lost or staked. Rename to match.
+    name = home.territory_type ? home.name.sub(home.territory_type, Territories::HOME) : home.name
+    home.update(gang_id: gang.id, home_gang_id: gang.id,
+                territory_type: Territories::HOME, name: name)
     home
   end
 

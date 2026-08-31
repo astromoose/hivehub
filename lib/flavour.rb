@@ -41,14 +41,6 @@ module Flavour
     "Howling", "Toxic"
   ].freeze
 
-  TURF_PLACE = [
-    "Dome", "Refinery", "Hab-block", "Promethium Cache", "Sludge Works",
-    "Vent Shaft", "Fighting Pit", "Water Still", "Drinking Hole", "Chem Pit",
-    "Slag Heap", "Manufactorum", "Transit Hub", "Guilder Post", "Shrine",
-    "Archeotech Dig", "Cable Farm", "Corpse Farm", "Toll Bridge", "Gantry Maze",
-    "Settlement", "Blackmarket Row"
-  ].freeze
-
   TURF_DESCRIPTIONS = [
     "The rats here are big enough to saddle, and twice as mean.",
     "A tithe-collector went missing here in '26. His autoquill is still writing somewhere in the dark.",
@@ -97,12 +89,16 @@ module Flavour
     ZONE_DESCRIPTIONS.sample(random: rng)
   end
 
-  # Returns [name, description] pairs, unique names within a batch.
-  def self.turf_batch(count, rng = Random)
-    names = TURF_PREFIX.product(TURF_PLACE).sample(count, random: rng)
+  # Returns `count` unique flavour prefixes for turf names.
+  def self.turf_prefixes(count, rng = Random)
+    TURF_PREFIX.sample(count, random: rng)
+  end
+
+  # Returns `count` turf descriptions (repeats only when the pool runs dry).
+  def self.turf_descriptions(count, rng = Random)
     descs = TURF_DESCRIPTIONS.sample(count, random: rng)
     descs += TURF_DESCRIPTIONS.sample(count - descs.size, random: rng) while descs.size < count
-    names.each_with_index.map { |(pre, place), i| ["#{pre} #{place}", descs[i]] }
+    descs
   end
 
   def self.quote(rng = Random)

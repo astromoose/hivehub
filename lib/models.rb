@@ -54,6 +54,7 @@ DB.create_table? :turfs do
   String :description
   foreign_key :gang_id, :gangs, on_delete: :set_null
   foreign_key :home_gang_id, :gangs, on_delete: :set_null
+  String :territory_type
   Time :created_at
   unique %i[zone_id q r]
 end
@@ -79,6 +80,9 @@ unless DB[:gangs].columns.include?(:mm_gang_id)
     add_column :mm_reputation, Integer
   end
 end
+
+# Lightweight migration for Dominion territory types.
+DB.alter_table(:turfs) { add_column :territory_type, String } unless DB[:turfs].columns.include?(:territory_type)
 
 class User < Sequel::Model
   one_to_many :campaigns

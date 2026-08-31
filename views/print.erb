@@ -29,6 +29,8 @@
     .hex { stroke: #2a2233; stroke-width: 2.5; }
     .hex-label { font-family: "Courier New", monospace; font-size: 8.5px; pointer-events: none; }
     .hex-home { font-size: 12px; pointer-events: none; }
+    .hex-type { font-size: 6.5px; font-style: italic; pointer-events: none; }
+    td .boons { font-size: 10px; color: #555; }
     .legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; }
     .legend li { display: flex; align-items: center; gap: 0.4rem; }
     .swatch { width: 14px; height: 14px; border: 1px solid #2a2233; display: inline-block; }
@@ -77,13 +79,22 @@
     <h2>Turf Gazetteer</h2>
     <table>
       <thead>
-        <tr><th>Turf</th><th>Controlled By</th><th>Notes</th></tr>
+        <tr><th>Turf</th><th>Territory</th><th>Controlled By</th><th>Notes</th></tr>
       </thead>
       <tbody>
         <% gang_names = @gangs.to_h { |g| [g.id, g.name] } %>
         <% @turfs.sort_by(&:name).each do |t| %>
           <tr>
             <td><%= h t.name %></td>
+            <td>
+              <% if t.territory_type %>
+                <strong><%= h t.territory_type %></strong>
+                <% boons = Territories.boon_lines(t.territory_type) %>
+                <% unless boons.empty? %><br><span class="boons"><%= boons.map { |b| h(b) }.join("<br>") %></span><% end %>
+              <% else %>
+                —
+              <% end %>
+            </td>
             <td class="owner">
               <% if t.gang_id %>
                 <%= h gang_names[t.gang_id] %><% if t.home_gang_id == t.gang_id %> <span class="home-mark">⌂ home</span><% end %>

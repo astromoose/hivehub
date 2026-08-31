@@ -128,6 +128,11 @@
           x: c.x, y: c.y + 13, "text-anchor": "middle", class: "hex-label",
         }, truncate(line2, 14)));
       }
+      if (t.territory_type) {
+        svg.appendChild(el("text", {
+          x: c.x, y: c.y + (line2 ? 24 : 13), "text-anchor": "middle", class: "hex-type",
+        }, truncate(t.territory_type, 18)));
+      }
     }
 
     renderLegend();
@@ -146,10 +151,17 @@
     owner.textContent = gang
       ? `Held by ${gang.name}${t.home_gang_id === gang.id ? " (home turf)" : ""}`
       : "No-man's-land";
+    tooltip.append(name, owner);
+    if (t.territory_type) {
+      const terr = document.createElement("div");
+      terr.className = "tt-territory";
+      terr.textContent = t.territory_type;
+      tooltip.appendChild(terr);
+    }
     const desc = document.createElement("div");
     desc.className = "tt-desc";
     desc.textContent = t.description || "";
-    tooltip.append(name, owner, desc);
+    tooltip.appendChild(desc);
     tooltip.hidden = false;
     const x = Math.min(e.clientX - rect.left + 14, rect.width - 250);
     tooltip.style.left = `${Math.max(0, x)}px`;
@@ -212,10 +224,27 @@
 
     const h = document.createElement("h3");
     h.textContent = t.name;
+    detailEl.appendChild(h);
+    if (t.territory_type) {
+      const terr = document.createElement("p");
+      terr.className = "territory-type";
+      terr.textContent = t.territory_type;
+      detailEl.appendChild(terr);
+    }
     const desc = document.createElement("p");
     desc.className = "muted small";
     desc.textContent = t.description || "";
-    detailEl.append(h, desc);
+    detailEl.appendChild(desc);
+    if (t.boons && t.boons.length) {
+      const bl = document.createElement("ul");
+      bl.className = "boon-list";
+      for (const b of t.boons) {
+        const li = document.createElement("li");
+        li.textContent = b;
+        bl.appendChild(li);
+      }
+      detailEl.appendChild(bl);
+    }
 
     const label = document.createElement("p");
     label.className = "small";

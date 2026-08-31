@@ -98,6 +98,11 @@
         x: c.x, y: c.y + 13, "text-anchor": "middle", class: "hex-label", fill: labelFill,
       }, truncate(line2, 14)));
     }
+    if (t.territory_type) {
+      svg.appendChild(el("text", {
+        x: c.x, y: c.y + (line2 ? 24 : 13), "text-anchor": "middle", class: "hex-type", fill: labelFill,
+      }, truncate(t.territory_type, 18)));
+    }
   }
 
   // Legend

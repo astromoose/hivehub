@@ -9,9 +9,22 @@ require "securerandom"
 
 require_relative "lib/models"
 require_relative "lib/flavour"
+require_relative "lib/territories"
 require_relative "lib/generator"
 require_relative "lib/icons"
 require_relative "lib/munda_manager"
+
+# Backfill Dominion territory types for zones created before this feature
+# (types only; existing turf names are preserved).
+Zone.each do |zone|
+  legacy = zone.turfs_dataset.where(territory_type: nil).all
+  next if legacy.empty?
+
+  types = Territories.deal(legacy.size)
+  legacy.each_with_index do |t, i|
+    t.update(territory_type: t.home_gang_id ? Territories::HOME : types[i])
+  end
+end
 
 set :public_folder, File.join(__dir__, "public")
 set :views, File.join(__dir__, "views")
@@ -337,7 +350,7 @@ get "/zones/:id/print" do
   @data_json = JSON.generate(
     {
       gangs: @gangs.map { |g| { id: g.id, name: g.name, gang_type: g.gang_type, color: g.color, icon_path: gang_icon_path(g) } },
-      turfs: @turfs.map { |t| { id: t.id, q: t.q, r: t.r, name: t.name, gang_id: t.gang_id, home_gang_id: t.home_gang_id } }
+      turfs: @turfs.map { |t| { id: t.id, q: t.q, r: t.r, name: t.name, gang_id: t.gang_id, home_gang_id: t.home_gang_id, territory_type: t.territory_type } }
     },
     script_safe: true
   )
@@ -353,7 +366,8 @@ get "/zones/:id/data" do
     gangs: gangs.map { |g| { id: g.id, name: g.name, gang_type: g.gang_type, color: g.color, icon_path: gang_icon_path(g) } },
     turfs: zone.turfs.map do |t|
       { id: t.id, q: t.q, r: t.r, name: t.name, description: t.description,
-        gang_id: t.gang_id, home_gang_id: t.home_gang_id }
+        gang_id: t.gang_id, home_gang_id: t.home_gang_id,
+        territory_type: t.territory_type, boons: Territories.boon_lines(t.territory_type) }
     end
   )
 end

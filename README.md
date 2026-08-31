@@ -52,11 +52,15 @@ username/password auth is available.
 - **Gang** — one of the 16 recognised affiliations, palette colour and a
   thematic icon ([game-icons.net](https://game-icons.net), CC BY 3.0 by
   Lorc, Delapouite & Carl Olsen) assigned on registration
-- **Turf** — a hex on the zone map; may be held by a gang, marked ⌂ if it is that gang's home
+- **Turf** — a hex on the zone map; typed as one of the 26 **Dominion
+  Campaign territories** (Necromunda Core Rulebook 2023) with boon
+  summaries; may be held by a gang, marked ⌂ if it is that gang's home
 
 ## Rules enforced
 
-- New gangs are granted a random **unclaimed edge turf** as their home
+- New gangs are granted a random **unclaimed edge turf** as their home,
+  which becomes a **Settlement** — every gang's unlosable Dominion
+  starting territory
 - At least **50% of every map is no-man's-land** at generation/claim time
 - New seasons re-chart the map: gangs carry over and receive fresh home turf
 - Arbitrators can reassign any turf by clicking a hex on the map

@@ -282,6 +282,7 @@ input:focus, select:focus { outline: 1px solid var(--color-4); }
 .hex.selected { stroke: var(--bright-3); stroke-width: 3.5; }
 .hex-label { fill: rgba(227, 213, 189, 0.95); font-size: 8.5px; font-family: inherit; pointer-events: none; text-transform: uppercase; letter-spacing: 0.05em; }
 .hex-home { fill: #f0e6d2; font-size: 12px; pointer-events: none; }
+.hex-type { fill: rgba(227, 213, 189, 0.7); font-size: 6.5px; font-style: italic; font-family: inherit; pointer-events: none; letter-spacing: 0.04em; }
 
 .turf-tooltip {
   position: absolute;
@@ -295,10 +296,15 @@ input:focus, select:focus { outline: 1px solid var(--color-4); }
 }
 .turf-tooltip .tt-name { color: var(--bright-3); text-transform: uppercase; letter-spacing: 0.08em; }
 .turf-tooltip .tt-owner { color: var(--bright-2); margin-top: 0.2rem; }
+.turf-tooltip .tt-territory { color: var(--bright-4); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; margin-top: 0.2rem; }
 .turf-tooltip .tt-desc { color: var(--text-dim); font-style: italic; margin-top: 0.3rem; }
 
 .turf-detail { margin-top: 1rem; border-top: 1px solid var(--line); padding-top: 0.9rem; }
 .turf-detail h3 { color: var(--bright-3); }
+.turf-detail .territory-type { color: var(--bright-4); text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.08em; margin: 0.1rem 0 0.3rem; }
+.boon-list { list-style: none; margin: 0 0 0.6rem; padding: 0.4rem 0.6rem; border: 1px dashed var(--border); font-size: 0.78rem; }
+.boon-list li { margin: 0.15rem 0; color: var(--text-dim); }
+.boon-list li::before { content: "▸ "; color: var(--bright-4); }
 .assign-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.6rem; }
 .assign-btn {
   display: flex; align-items: center; gap: 0.6rem;
