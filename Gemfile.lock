@@ -8,7 +8,7 @@ GEM
     multi_json (1.21.1)
     mustermann (3.1.1)
     nio4r (2.7.5)
-    puma (6.6.1)
+    puma (7.2.1)
       nio4r (~> 2.0)
     rack (3.2.7)
     rack-protection (4.2.1)
@@ -61,7 +61,7 @@ PLATFORMS
 
 DEPENDENCIES
   bcrypt (~> 3.1)
-  puma (~> 6.4)
+  puma (~> 7.2)
   rack-session (~> 2.0)
   rackup (~> 2.2)
   sequel (~> 5.85)
