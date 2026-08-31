@@ -60,3 +60,19 @@ username/password auth is available.
 - At least **50% of every map is no-man's-land** at generation/claim time
 - New seasons re-chart the map: gangs carry over and receive fresh home turf
 - Arbitrators can reassign any turf by clicking a hex on the map
+
+## Munda Manager integration
+
+HIVEHUB campaigns can link to a [Munda Manager](https://www.mundamanager.com)
+campaign via its **public campaign data API** (no auth; rate limited to
+10 requests/minute):
+
+1. On the campaign page, paste the UUID from your Munda Manager campaign
+   URL (`mundamanager.com/campaigns/<uuid>`) and establish the uplink.
+2. **Import Gangs** pulls each member's gangs (name and house, normalised
+   to HIVEHUB affiliations) and assigns home turf as usual. Gangs beyond
+   map capacity are skipped and reported.
+3. **Sync Stats** refreshes gang rating, credits and reputation, shown
+   next to each imported gang in the roster.
+
+Fighter-level data is not available through Munda Manager's public API.

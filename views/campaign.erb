@@ -67,6 +67,11 @@
             <%= gang_icon_svg(g) %>
             <span class="gang-name"><%= h g.name %></span>
             <span class="muted small"><%= h g.gang_type %></span>
+            <% if g.mm_gang_id %>
+              <span class="mm-stats small" title="Synced from Munda Manager<%= g.mm_owner ? " (#{h g.mm_owner})" : "" %>">
+                ⛓ R:<%= g.mm_rating || "?" %> · ₢<%= g.mm_credits || "?" %> · Rep:<%= g.mm_reputation || "?" %>
+              </span>
+            <% end %>
             <form method="post" action="/gangs/<%= g.id %>/delete" class="inline-form" onsubmit="return confirm('Strike this gang from the record? Their turf reverts to no-man\'s-land.')">
               <button type="submit" class="link-btn danger-link">✖</button>
             </form>
@@ -89,5 +94,32 @@
       <button type="submit" class="btn primary">Register &amp; Assign Home Turf</button>
     </form>
     <p class="muted small">New gangs are granted a random unclaimed turf on the edge of the current season's map. At least half of every map must remain no-man's-land at claim time.</p>
+
+    <h3>Munda Manager Uplink</h3>
+    <% if @campaign.mm_campaign_id %>
+      <p class="small">Linked to <strong><%= h(@campaign.mm_campaign_name || @campaign.mm_campaign_id) %></strong>
+        <% if @campaign.mm_synced_at %><span class="muted small">(last sync <%= @campaign.mm_synced_at.strftime("%Y-%m-%d %H:%M") %>)</span><% end %>
+      </p>
+      <div class="card-actions">
+        <form method="post" action="/campaigns/<%= @campaign.id %>/munda/import" class="inline-form">
+          <button type="submit" class="btn small-btn">Import Gangs</button>
+        </form>
+        <form method="post" action="/campaigns/<%= @campaign.id %>/munda/sync" class="inline-form">
+          <button type="submit" class="btn small-btn">Sync Stats</button>
+        </form>
+        <form method="post" action="/campaigns/<%= @campaign.id %>/munda/link" class="inline-form">
+          <input type="hidden" name="mm_campaign_id" value="">
+          <button type="submit" class="btn danger small-btn">Unlink</button>
+        </form>
+      </div>
+    <% else %>
+      <form method="post" action="/campaigns/<%= @campaign.id %>/munda/link" class="stacked-form narrow">
+        <label>Munda Manager campaign ID
+          <input type="text" name="mm_campaign_id" placeholder="e.g. 4a2ab55f-ec68-44ab-9572-e0f68e2450d0" pattern="[0-9a-fA-F\-]{36}">
+        </label>
+        <button type="submit" class="btn primary">Establish Uplink</button>
+      </form>
+      <p class="muted small">Paste the UUID from your <a href="https://www.mundamanager.com">mundamanager.com</a> campaign URL (<code>/campaigns/&lt;uuid&gt;</code>). Import pulls each member's gangs; Sync refreshes rating, credits and reputation.</p>
+    <% end %>
   </section>
 </div>

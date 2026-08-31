@@ -62,6 +62,23 @@ end
 DB.alter_table(:zones) { add_column :archived_at, Time } unless DB[:zones].columns.include?(:archived_at)
 # Lightweight migration for databases created before gang icons.
 DB.alter_table(:gangs) { add_column :icon, String } unless DB[:gangs].columns.include?(:icon)
+# Lightweight migration for Munda Manager integration.
+unless DB[:campaigns].columns.include?(:mm_campaign_id)
+  DB.alter_table(:campaigns) do
+    add_column :mm_campaign_id, String
+    add_column :mm_campaign_name, String
+    add_column :mm_synced_at, Time
+  end
+end
+unless DB[:gangs].columns.include?(:mm_gang_id)
+  DB.alter_table(:gangs) do
+    add_column :mm_gang_id, String
+    add_column :mm_owner, String
+    add_column :mm_rating, Integer
+    add_column :mm_credits, Integer
+    add_column :mm_reputation, Integer
+  end
+end
 
 class User < Sequel::Model
   one_to_many :campaigns

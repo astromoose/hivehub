@@ -11,6 +11,7 @@ require_relative "lib/models"
 require_relative "lib/flavour"
 require_relative "lib/generator"
 require_relative "lib/icons"
+require_relative "lib/munda_manager"
 
 set :public_folder, File.join(__dir__, "public")
 set :views, File.join(__dir__, "views")
@@ -222,6 +223,82 @@ post "/gangs/:id/delete" do
   halt 404 unless gang && gang.campaign.user_id == current_user.id
   gang.destroy
   redirect "/campaigns/#{gang.campaign_id}"
+end
+
+# ---------- Munda Manager integration ----------
+
+post "/campaigns/:id/munda/link" do
+  require_login!
+  campaign = own_campaign!(params[:id])
+  mm_id = params[:mm_campaign_id].to_s.strip
+  if mm_id.empty?
+    campaign.update(mm_campaign_id: nil, mm_campaign_name: nil, mm_synced_at: nil)
+    session[:flash] = "Munda Manager uplink severed."
+  else
+    begin
+      payload = MundaManager.fetch_campaign(mm_id)
+      campaign.update(mm_campaign_id: mm_id,
+                      mm_campaign_name: MundaManager.campaign_name_from(payload),
+                      mm_synced_at: Time.now)
+      session[:flash] = "Uplink established: #{MundaManager.campaign_name_from(payload)}"
+    rescue MundaManager::Error => e
+      session[:flash] = e.message
+    end
+  end
+  redirect "/campaigns/#{campaign.id}"
+end
+
+post "/campaigns/:id/munda/import" do
+  require_login!
+  campaign = own_campaign!(params[:id])
+  halt 400, "No Munda Manager campaign linked" unless campaign.mm_campaign_id
+  begin
+    payload = MundaManager.fetch_campaign(campaign.mm_campaign_id)
+    known = campaign.gangs_dataset.exclude(mm_gang_id: nil).select_map(:mm_gang_id)
+    imported = 0
+    skipped = []
+    MundaManager.gangs_from(payload).each do |mm|
+      next if mm[:mm_id].nil? || known.include?(mm[:mm_id]) || mm[:name].empty?
+
+      begin
+        gang = Generator.add_gang(campaign, name: mm[:name], gang_type: mm[:gang_type])
+        gang.update(mm_gang_id: mm[:mm_id], mm_owner: mm[:owner], mm_rating: mm[:rating],
+                    mm_credits: mm[:credits], mm_reputation: mm[:reputation])
+        imported += 1
+      rescue RuntimeError => e
+        skipped << "#{mm[:name]} (#{e.message})"
+      end
+    end
+    campaign.update(mm_campaign_name: MundaManager.campaign_name_from(payload), mm_synced_at: Time.now)
+    msg = "Imported #{imported} gang#{"s" unless imported == 1} from Munda Manager."
+    msg += " Skipped: #{skipped.join("; ")}" unless skipped.empty?
+    session[:flash] = msg
+  rescue MundaManager::Error => e
+    session[:flash] = e.message
+  end
+  redirect "/campaigns/#{campaign.id}"
+end
+
+post "/campaigns/:id/munda/sync" do
+  require_login!
+  campaign = own_campaign!(params[:id])
+  halt 400, "No Munda Manager campaign linked" unless campaign.mm_campaign_id
+  begin
+    payload = MundaManager.fetch_campaign(campaign.mm_campaign_id)
+    by_mm_id = MundaManager.gangs_from(payload).to_h { |g| [g[:mm_id], g] }
+    updated = 0
+    campaign.gangs_dataset.exclude(mm_gang_id: nil).each do |gang|
+      mm = by_mm_id[gang.mm_gang_id] or next
+      gang.update(mm_owner: mm[:owner], mm_rating: mm[:rating],
+                  mm_credits: mm[:credits], mm_reputation: mm[:reputation])
+      updated += 1
+    end
+    campaign.update(mm_campaign_name: MundaManager.campaign_name_from(payload), mm_synced_at: Time.now)
+    session[:flash] = "Synced stats for #{updated} gang#{"s" unless updated == 1} from Munda Manager."
+  rescue MundaManager::Error => e
+    session[:flash] = e.message
+  end
+  redirect "/campaigns/#{campaign.id}"
 end
 
 # ---------- Zones & turf ----------
