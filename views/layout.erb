@@ -20,6 +20,9 @@
       <% if current_user %>
         <span class="user-tag">⛭ <%= h current_user.display_name %></span>
         <a href="/dashboard">Campaigns</a>
+      <% end %>
+      <a href="/about">About</a>
+      <% if current_user %>
         <form method="post" action="/logout" class="inline-form"><button type="submit" class="link-btn">Sign out</button></form>
       <% end %>
     </nav>

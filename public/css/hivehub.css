@@ -431,3 +431,8 @@ h1 { text-shadow: 0 0 12px rgba(227, 213, 189, 0.25); }
     animation: none;
   }
 }
+
+/* ---------- About ---------- */
+.about-panel { max-width: 760px; margin: 0 auto; }
+.about-panel p { line-height: 1.75; }
+.about-panel h2 { margin-top: 1.6rem; }

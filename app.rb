@@ -83,6 +83,10 @@ get "/" do
   current_user ? redirect("/dashboard") : redirect("/login")
 end
 
+get "/about" do
+  erb :about
+end
+
 get "/login" do
   redirect "/dashboard" if current_user
   erb :login
