@@ -28,7 +28,10 @@
   <h2>Charter New Campaign</h2>
   <form method="post" action="/campaigns" class="stacked-form narrow">
     <label>Campaign name
-      <input type="text" name="name" required maxlength="80" placeholder="e.g. The Sump Wars">
+      <span class="input-with-btn">
+        <input type="text" id="campaign-name" name="name" required maxlength="80" placeholder="e.g. The Sump Wars">
+        <button type="button" class="btn suggest-btn" data-kind="campaign" data-target="campaign-name" title="Suggest a name">🎲</button>
+      </span>
     </label>
     <label>Description <span class="muted small">(optional)</span>
       <input type="text" name="description" maxlength="200" placeholder="A struggle for the last clean water in Hive Primus…">

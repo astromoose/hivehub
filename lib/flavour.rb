@@ -105,6 +105,51 @@ module Flavour
     descs
   end
 
+  CONFLICTS = [
+    "War", "Wars", "Feud", "Uprising", "Reckoning", "Insurrection",
+    "Vendetta", "Tithe War", "Blood-Tax", "Schism", "Purge", "Dominion"
+  ].freeze
+
+  GANG_ADJ = {
+    "House Escher" => %w[Venom Neon Wyld Crimson Razor Gilded],
+    "House Goliath" => %w[Iron Slag Furnace Brute Scarred Unbroken],
+    "House Van Saar" => %w[Static Chrome Rad Arc Cinder-Wire Luminous],
+    "House Orlock" => %w[Road Iron Freight Sovereign Throttle Rust],
+    "House Delaque" => %w[Silent Pale Shrouded Whispering Faceless Veiled],
+    "House Cawdor" => %w[Penitent Ash Redeemed Burning Zealous Threadbare],
+    "default" => %w[Rusted Howling Broken Ashen Feral Grim Sump Bleak Vicious Blistered]
+  }.freeze
+
+  GANG_NOUN = {
+    "House Escher" => %w[Widows Sirens Vipers Furies Daughters Queens],
+    "House Goliath" => %w[Hammers Bulls Crushers Sons Breakers Kings],
+    "House Van Saar" => %w[Archangels Circuits Ghosts Prophets Welders Choir],
+    "House Orlock" => %w[Wolves Riders Roadhounds Nomads Freighters Sovereigns],
+    "House Delaque" => %w[Whispers Ghosts Serpents Shrouds Masks Echoes],
+    "House Cawdor" => %w[Preachers Burners Faithful Flagellants Candles Crows],
+    "default" => %w[Blades Dogs Reavers Wraiths Jackals Vultures Rats Saints Cutters Scavvers]
+  }.freeze
+
+  # A random campaign name, e.g. "The Cinder Feud" or "The War for Dust Falls".
+  def self.campaign_name(rng = Random)
+    case rng.rand(3)
+    when 0 then "The #{ZONE_PREFIX.sample(random: rng)} #{CONFLICTS.sample(random: rng)}"
+    when 1 then "The #{(CONFLICTS - ["Wars"]).sample(random: rng)} for #{zone_name(rng)}"
+    else "The #{TURF_PREFIX.sample(random: rng)} #{ZONE_SUFFIX.sample(random: rng)} #{CONFLICTS.sample(random: rng)}"
+    end
+  end
+
+  # A random gang name flavoured by affiliation where we know the house.
+  def self.gang_name(gang_type = nil, rng = Random)
+    adj = GANG_ADJ.fetch(gang_type, GANG_ADJ["default"]) + GANG_ADJ["default"]
+    noun = GANG_NOUN.fetch(gang_type, GANG_NOUN["default"]) + GANG_NOUN["default"]
+    case rng.rand(3)
+    when 0 then "The #{adj.sample(random: rng)} #{noun.sample(random: rng)}"
+    when 1 then "#{noun.sample(random: rng)} of #{zone_name(rng)}"
+    else "The #{ZONE_PREFIX.sample(random: rng)} #{noun.sample(random: rng)}"
+    end
+  end
+
   def self.quote(rng = Random)
     QUOTES.sample(random: rng)
   end

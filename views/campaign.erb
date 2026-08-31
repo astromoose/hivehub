@@ -82,7 +82,10 @@
     <h3>Register Gang</h3>
     <form method="post" action="/campaigns/<%= @campaign.id %>/gangs" class="stacked-form narrow">
       <label>Gang name
-        <input type="text" name="name" required maxlength="60" placeholder="e.g. The Slag Sirens">
+        <span class="input-with-btn">
+          <input type="text" id="gang-name" name="name" required maxlength="60" placeholder="e.g. The Slag Sirens">
+          <button type="button" class="btn suggest-btn" data-kind="gang" data-target="gang-name" data-type-from="select[name=gang_type]" title="Suggest a name">🎲</button>
+        </span>
       </label>
       <label>Affiliation
         <select name="gang_type" required>

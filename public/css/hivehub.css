@@ -432,6 +432,11 @@ h1 { text-shadow: 0 0 12px rgba(227, 213, 189, 0.25); }
   }
 }
 
+/* ---------- Name suggestions ---------- */
+.input-with-btn { display: flex; gap: 0.4rem; align-items: stretch; }
+.input-with-btn input { flex: 1; min-width: 0; }
+.suggest-btn { padding: 0.3rem 0.6rem; line-height: 1; flex-shrink: 0; }
+
 /* ---------- About ---------- */
 .about-panel { max-width: 760px; margin: 0 auto; }
 .about-panel p { line-height: 1.75; }

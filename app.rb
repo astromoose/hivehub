@@ -87,6 +87,18 @@ get "/about" do
   erb :about
 end
 
+# ---------- Name suggestions ----------
+
+get "/suggest/campaign" do
+  require_login!
+  json name: Flavour.campaign_name
+end
+
+get "/suggest/gang" do
+  require_login!
+  json name: Flavour.gang_name(params[:gang_type])
+end
+
 get "/login" do
   redirect "/dashboard" if current_user
   erb :login
